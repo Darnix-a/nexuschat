@@ -1,0 +1,30 @@
+{
+  "name": "nexus-chat",
+  "version": "1.0.0",
+  "description": "A modern real-time chat application with Discord-inspired UI, built with Node.js, Express, and Socket.IO",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chat",
+    "real-time",
+    "socket.io",
+    "express",
+    "node.js"
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=14.x"
+  },
+  "dependencies": {
+    "cloudinary": "^2.6.1",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "multer": "^2.0.1",
+    "socket.io": "^4.8.1"
+  }
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="screen">
+            <div class="login-form">
+                <div class="login-logo">💬</div>                <h1>Welcome to Nexus Chat</h1>
+                <p class="login-subtitle">Connect with everyone</p>
+                <input type="text" id="usernameInput" placeholder="Enter your username" maxlength="20">
+                <button id="joinBtn">Join Server</button>
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div id="chatScreen" class="screen hidden">            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="server-info">
+                    <div class="server-name">💬 Nexus Chat</div>
+                </div>
+                <div class="online-users">
+                    <div class="channel-header">ONLINE USERS</div>
+                    <div id="usersList" class="users-list">
+                        <!-- Users will be populated here -->
+                    </div>
+                </div>
+                <div class="user-panel">
+                    <div class="user-info">
+                        <div class="user-avatar">👤</div>
+                        <div class="user-details">
+                            <div id="currentUser" class="username"></div>
+                            <div class="user-status">Online</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="chat-area">                <div class="chat-header">
+                    <div class="channel-info">
+                        <span class="channel-hash">💬</span>
+                        <span class="channel-title">Main Chat</span>
+                    </div>
+                    <div class="header-tools">
+                        <span id="userCount" class="user-count">1 member</span>
+                    </div>
+                </div>
+
+                <div class="chat-container">
+                    <div id="messages" class="messages"></div>
+                    <div id="typingIndicator" class="typing-indicator"></div>
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="chat-input">
+                        <div class="input-wrapper">
+                            <input type="text" id="messageInput" placeholder="Message Main Chat" maxlength="500">
+                            <div class="input-buttons">
+                                <div class="file-upload-container">
+                                    <button type="button" class="input-button file-upload-btn" onclick="document.getElementById('fileInput').click()" title="Upload a file">
+                                        📎
+                                    </button>
+                                    <input type="file" id="fileInput" class="file-input" accept="image/*,.pdf,.txt,.docx,.xlsx,.zip,.mp4,.mp3">
+                                </div>
+                                <button id="sendBtn" class="input-button send-btn" title="Send message">
+                                    ➤
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Progress Modal -->
+    <div id="uploadProgress" class="upload-progress" style="display: none;">
+        <div class="upload-content">
+            <div class="upload-title">Uploading file...</div>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+            </div>
+            <div id="progressText" class="progress-text">0%</div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
