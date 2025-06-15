@@ -3,7 +3,6 @@ const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
 const multer = require('multer');
-const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
 
@@ -23,13 +22,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET || 'demo'
 });
 
-// Create uploads directory if it doesn't exist (for local development)
-const uploadsDir = path.join(__dirname, 'public', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Configure multer for file uploads (memory storage for Cloudinary)
+// Configure multer for file uploads (memory storage only)
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -66,55 +59,43 @@ app.post('/upload', (req, res) => {
       return res.status(400).json({ error: 'No file uploaded' });
     }
     
-    try {
-      // Use Cloudinary if configured, otherwise save locally
-      if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_CLOUD_NAME !== 'demo') {
-        // Upload to Cloudinary
-        const result = await new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream(
-            {
-              resource_type: 'auto',
-              public_id: `chat_files/${Date.now()}_${req.file.originalname}`,
-              original_filename: req.file.originalname
-            },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result);
-            }
-          ).end(req.file.buffer);
-        });
-        
-        console.log('File uploaded to Cloudinary:', result.public_id);
-        
-        return res.json({
-          filename: result.public_id,
-          originalname: req.file.originalname,
-          size: req.file.size,
-          url: result.secure_url,
-          mimetype: req.file.mimetype
-        });
-      } else {
-        // Fallback to local storage for development
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const fileName = uniqueSuffix + path.extname(req.file.originalname);
-        const filePath = path.join(uploadsDir, fileName);
-        
-        fs.writeFileSync(filePath, req.file.buffer);
-        
-        console.log('File uploaded locally:', fileName);
-        
-        return res.json({
-          filename: fileName,
-          originalname: req.file.originalname,
-          size: req.file.size,
-          url: `/uploads/${fileName}`,
-          mimetype: req.file.mimetype
-        });
-      }
-    } catch (uploadError) {
-      console.error('File upload error:', uploadError);
+    // Check if Cloudinary is properly configured
+    if (!process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME === 'demo') {
       return res.status(500).json({ 
-        error: 'Failed to upload file' 
+        error: 'File uploads are not configured. Please set up Cloudinary environment variables.' 
+      });
+    }
+    
+    try {
+      // Upload to Cloudinary
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            resource_type: 'auto',
+            public_id: `nexus_chat/${Date.now()}_${Math.random().toString(36).substring(2)}`,
+            original_filename: req.file.originalname
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(req.file.buffer);
+      });
+      
+      console.log('File uploaded to Cloudinary:', result.public_id);
+      
+      return res.json({
+        filename: result.public_id,
+        originalname: req.file.originalname,
+        size: req.file.size,
+        url: result.secure_url,
+        mimetype: req.file.mimetype
+      });
+      
+    } catch (uploadError) {
+      console.error('Cloudinary upload error:', uploadError);
+      return res.status(500).json({ 
+        error: 'Failed to upload file to cloud storage' 
       });
     }
   });

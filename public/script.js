@@ -123,8 +123,7 @@ async function handleFileUpload(event) {
                 progressText.textContent = Math.round(percentComplete) + '%';
             }
         });
-        
-        xhr.addEventListener('load', () => {
+          xhr.addEventListener('load', () => {
             uploadProgress.style.display = 'none';
             
             if (xhr.status === 200) {
@@ -144,7 +143,16 @@ async function handleFileUpload(event) {
                 // Clear file input
                 fileInput.value = '';
             } else {
-                alert('File upload failed. Please try again.');
+                try {
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    if (errorResponse.error.includes('not configured')) {
+                        alert('File uploads are not available. The server needs Cloudinary configuration for file sharing.');
+                    } else {
+                        alert('File upload failed: ' + errorResponse.error);
+                    }
+                } catch (e) {
+                    alert('File upload failed. Please try again.');
+                }
             }
         });
         
