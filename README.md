@@ -1,3 +1,5 @@
+# DISCLAIMER: NOT FULLY WORKING THATS WHY IM OPEN SOURCING IT
+
 # Nexus Chat
 
 A modern, real-time chat application with Discord-inspired UI, built with Node.js, Express.js, and Socket.IO. Features a beautiful dark purple theme and seamless file sharing capabilities.
